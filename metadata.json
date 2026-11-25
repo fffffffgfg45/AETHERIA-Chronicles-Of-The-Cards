@@ -1,0 +1,8 @@
+{
+  "name": "Aetheria: Chroniques des Cartes",
+  "description": "Jeu de cartes tactique et deckbuilding médiéval fantastique avec système de familiers et animaux de compagnie multiplicateurs de dégâts, missions quotidiennes, arbre de compétences, guilde, troc, élixirs et arène compétitive.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

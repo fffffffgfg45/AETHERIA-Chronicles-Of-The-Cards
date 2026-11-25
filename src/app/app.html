@@ -1,0 +1,1182 @@
+<div
+  class="min-h-screen text-[#e0dcc7] flex flex-col font-serif selection:bg-[#5a1a1a] selection:text-[#e0dcc7] transition-all duration-500 relative"
+  [class.theme-stone-citadel]="gameState.medievalTheme() === 'stone_citadel'"
+  [class.theme-illuminated-parchment]="gameState.medievalTheme() === 'illuminated_parchment'"
+  [class.theme-royal-sanctuary]="gameState.medievalTheme() === 'royal_sanctuary'">
+  
+  <!-- Ambient Torchlight Glow in Castle Keep -->
+  <div class="torch-glow-left"></div>
+  <div class="torch-glow-right"></div>
+
+  <!-- 3-ZONE TOP BAR CONTRACT WITH CASTLE BATTLEMENTS -->
+  <header class="sticky top-0 z-40 bg-[#120f0c]/95 backdrop-blur-md border-b-2 border-[#8b6b43]/70 px-4 lg:px-8 py-3 flex items-center justify-between shadow-2xl medieval-battlements">
+    @if (showOnlinePopover() || showQuickVolume() || showMoreMenu()) {
+      <button
+        type="button"
+        aria-label="Fermer les menus ouverts"
+        (click)="closePopoversOnEscape()"
+        class="fixed inset-0 z-40 w-full h-full bg-transparent border-0 cursor-default"></button>
+    }
+    
+    <!-- Zone 1: Brand Title (single text element with heraldic fleur-de-lis) -->
+    <a href="#" (click)="switchView('arena'); $event.preventDefault()" class="font-cinzel-dec text-lg sm:text-xl font-black text-[#c5a880] tracking-wide hover:text-[#d4af37] transition-colors whitespace-nowrap shrink-0 flex items-center gap-2">
+      <img
+        src="/src/assets/images/emblem_aetheria_crest_1795189810140.jpg"
+        alt="Blason d'Aetheria"
+        class="w-7 h-7 rounded-lg object-cover border border-[#d4af37]/70 shadow-[0_0_8px_rgba(212,175,55,0.4)] shrink-0"
+        referrerpolicy="no-referrer" />
+      <span>Aetheria: Chroniques</span>
+    </a>
+
+    <!-- Zone 2: Navigation Links (4-6 links, single-line) -->
+    <nav class="hidden lg:flex items-center gap-1.5 font-cinzel text-xs font-bold">
+      <button
+        (click)="switchView('showcase')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+        [class.bg-gradient-to-r]="currentView() === 'showcase'"
+        [class.from-[#d4af37]]="currentView() === 'showcase'"
+        [class.to-[#f59e0b]]="currentView() === 'showcase'"
+        [class.text-black]="currentView() === 'showcase'"
+        [class.border-[#ffd700]]="currentView() === 'showcase'"
+        [class.shadow-[0_0_15px_rgba(212,175,55,0.4)]]="currentView() === 'showcase'"
+        [class.text-[#ffd700]]="currentView() !== 'showcase'"
+        [class.border-[#d4af37]/60]="currentView() !== 'showcase'"
+        [class.hover:text-white]="currentView() !== 'showcase'"
+        [class.hover:bg-[#1a1612]]="currentView() !== 'showcase'">
+        <img
+          src="/src/assets/images/emblem_aetheria_crest_1795189810140.jpg"
+          alt="Vitrine"
+          class="w-4 h-4 rounded object-cover border border-[#d4af37]/60 shrink-0"
+          referrerpolicy="no-referrer" />
+        <span>Site Public</span>
+      </button>
+
+      <button
+        (click)="switchView('modes')"
+        class="medieval-btn px-3.5 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+        [class.bg-[#8b2b2b]_text-white_border-[#ff4d4d]_shadow-[0_0_15px_rgba(139,43,43,0.4)]]="currentView() === 'modes' || currentView() === 'story' || currentView() === 'duel'"
+        [class.text-[#c5a880]_border-[#8b6b43]/60_hover:text-white_hover:bg-[#1a1612]_hover:border-[#d4af37]]="currentView() !== 'modes' && currentView() !== 'story' && currentView() !== 'duel'">
+        <mat-icon class="text-sm text-[#d4af37]">sports_esports</mat-icon>
+        <span>Modes</span>
+      </button>
+
+      <button
+        (click)="switchView('arena')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0"
+        [class.bg-[#8b2b2b]_text-white_border-[#ff4d4d]_shadow-[0_0_15px_rgba(139,43,43,0.4)]]="currentView() === 'arena'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'arena'">
+        Arène
+      </button>
+
+      <button
+        (click)="switchView('deckbuilder')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0"
+        [class.bg-[#1a1612]_text-[#c5a880]_border-[#8b6b43]_shadow-md]="currentView() === 'deckbuilder'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'deckbuilder'">
+        Grimoire
+      </button>
+
+      <button
+        (click)="switchView('heroes')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0"
+        [class.bg-[#1a1612]_text-[#c5a880]_border-[#8b6b43]_shadow-md]="currentView() === 'heroes'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'heroes'">
+        Héros
+      </button>
+
+      <button
+        (click)="switchView('skilltree')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1"
+        [class.bg-emerald-950/70_text-emerald-300_border-emerald-500/80_shadow-[0_0_12px_rgba(16,185,129,0.3)]]="currentView() === 'skilltree'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-emerald-300_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'skilltree'">
+        <mat-icon class="text-xs text-emerald-400">park</mat-icon>
+        <span>Arbre</span>
+      </button>
+
+      <button
+        (click)="switchView('pets')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+        [class.bg-[#1a1612]_text-[#c5a880]_border-[#8b6b43]_shadow-md]="currentView() === 'pets'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'pets'">
+        @if (gameState.equippedPet(); as activePet) {
+          @if (activePet.imageUrl) {
+            <img
+              [src]="activePet.imageUrl"
+              [alt]="activePet.name"
+              class="w-4 h-4 rounded-full object-cover border border-[#4dff88]/70 shrink-0"
+              referrerpolicy="no-referrer" />
+          } @else {
+            <mat-icon class="text-xs text-[#4dff88]">pets</mat-icon>
+          }
+          <span>Familiers</span>
+          <span class="text-[10px] font-mono text-[#4dff88] font-bold">x{{ activePet.totalMultiplier.toFixed(2) }}</span>
+        } @else {
+          <mat-icon class="text-xs text-[#4dff88]">pets</mat-icon>
+          <span>Familiers</span>
+        }
+      </button>
+
+      <button
+        (click)="switchView('relics')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1"
+        [class.bg-[#d4af37]/20_text-[#d4af37]_border-[#d4af37]_shadow-[0_0_12px_rgba(212,175,55,0.3)]]="currentView() === 'relics'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#d4af37]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'relics'">
+        <mat-icon class="text-xs text-[#d4af37]">auto_awesome</mat-icon>
+        <span>Reliques</span>
+      </button>
+
+      <button
+        (click)="switchView('inventory')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1"
+        [class.bg-[#d4af37]/20_text-[#d4af37]_border-[#d4af37]_shadow-[0_0_12px_rgba(212,175,55,0.3)]]="currentView() === 'inventory'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'inventory'">
+        <mat-icon class="text-xs text-[#d4af37]">science</mat-icon>
+        <span>Synthèse</span>
+      </button>
+
+      <button
+        (click)="switchView('bestiary')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1"
+        [class.bg-[#d4af37]/20_text-[#d4af37]_border-[#d4af37]_shadow-[0_0_12px_rgba(212,175,55,0.3)]]="currentView() === 'bestiary'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'bestiary'">
+        <mat-icon class="text-xs text-[#d4af37]">menu_book</mat-icon>
+        <span>Bestiaire</span>
+      </button>
+
+      <button
+        (click)="switchView('achievements')"
+        class="medieval-btn relative px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1"
+        [class.bg-[#d4af37]/20_text-[#d4af37]_border-[#d4af37]_shadow-[0_0_12px_rgba(212,175,55,0.3)]]="currentView() === 'achievements'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'achievements'">
+        <mat-icon class="text-xs text-[#d4af37]">emoji_events</mat-icon>
+        <span>Succès</span>
+        @if (gameState.achievementsClaimableCount() > 0) {
+          <span class="px-1.5 py-0.2 bg-[#d4af37] text-[#120f0c] rounded-full text-[9px] font-mono font-black tabular-nums">
+            {{ gameState.achievementsClaimableCount() }}
+          </span>
+        }
+      </button>
+
+      <button
+        (click)="switchView('ranked')"
+        class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0"
+        [class.bg-[#1a1612]_text-[#c5a880]_border-[#8b6b43]_shadow-md]="currentView() === 'ranked'"
+        [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="currentView() !== 'ranked'">
+        Classement
+      </button>
+
+      <!-- More Dropdown for additional modules -->
+      <div class="relative">
+        <button
+          (click)="toggleMoreMenu()"
+          class="medieval-btn px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 flex items-center gap-1"
+          [class.bg-[#1a1612]_text-[#c5a880]_border-[#8b6b43]]="showMoreMenu()"
+          [class.text-[#8b6b43]_border-transparent_hover:text-[#c5a880]_hover:bg-[#1a1612]_hover:border-[#3a2f23]]="!showMoreMenu()">
+          <span>Plus</span>
+          @if (gameState.pendingIncomingTradesCount() > 0) {
+            <span class="px-1.5 py-0.5 rounded-full bg-[#8b2b2b] border border-[#ff6b6b]/50 text-white text-[9px] font-mono font-black tabular-nums">
+              {{ gameState.pendingIncomingTradesCount() }}
+            </span>
+          }
+          <mat-icon class="text-xs">expand_more</mat-icon>
+        </button>
+
+        @if (showMoreMenu()) {
+          <div class="absolute top-full right-0 mt-2 w-52 bg-[#120f0c] border border-[#3a2f23] rounded-xl p-2 shadow-2xl space-y-1 z-50 animate-in fade-in">
+            <button
+              (click)="switchView('showcase'); showMoreMenu.set(false)"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#ffd700] hover:bg-[#25180d] border border-[#d4af37]/40 flex items-center gap-2">
+              <img
+                src="/src/assets/images/emblem_aetheria_crest_1795189810140.jpg"
+                alt="Vitrine"
+                class="w-4 h-4 rounded object-cover border border-[#d4af37]/60 shrink-0"
+                referrerpolicy="no-referrer" />
+              <span>Site Public (Vitrine)</span>
+            </button>
+            <button
+              (click)="switchView('changelog')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#ffd700] hover:bg-[#1a1612] flex items-center gap-2">
+              <mat-icon class="text-[#d4af37] text-sm">new_releases</mat-icon>
+              <span>Notes de Patch &amp; Correctifs</span>
+              @if (patchNotes.unreadCount() > 0) {
+                <span class="ml-auto px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-mono font-black tabular-nums">
+                  {{ patchNotes.unreadCount() }}
+                </span>
+              }
+            </button>
+            <button
+              (click)="openDailyMissions(); showMoreMenu.set(false)"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#d4af37] hover:bg-[#1a1612] flex items-center gap-2">
+              <mat-icon class="text-[#d4af37] text-sm">assignment_turned_in</mat-icon>
+              <span>Missions Tactiques</span>
+              @if (missionsService.hasClaimableRewards()) {
+                <span class="ml-auto w-2 h-2 bg-[#d4af37] rounded-full animate-ping"></span>
+              }
+            </button>
+            <button
+              (click)="switchView('quests')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#ffd700] hover:bg-[#1a1612] flex items-center gap-2">
+              <mat-icon class="text-[#d4af37] text-sm">auto_stories</mat-icon>
+              <span>Quêtes Épiques</span>
+              @if (questService.claimableCount() > 0) {
+                <span class="ml-auto px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-mono font-black tabular-nums">
+                  {{ questService.claimableCount() }}
+                </span>
+              }
+            </button>
+            <button
+              (click)="switchView('bestiary'); showMoreMenu.set(false)"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#ffd700] hover:bg-[#1a1612] flex items-center gap-2">
+              <mat-icon class="text-[#ffd700] text-sm">menu_book</mat-icon>
+              <span>Bestiarium (Monstres)</span>
+            </button>
+            <button
+              (click)="switchView('achievements')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#ffd700] hover:bg-[#1a1612] flex items-center gap-2">
+              <mat-icon class="text-[#ffd700] text-sm">emoji_events</mat-icon>
+              <span>Succès &amp; Hauts Faits</span>
+              @if (gameState.achievementsClaimableCount() > 0) {
+                <span class="ml-auto px-1.5 py-0.5 rounded-full bg-[#d4af37] text-[#120f0c] text-[9px] font-mono font-black tabular-nums">
+                  {{ gameState.achievementsClaimableCount() }}
+                </span>
+              }
+            </button>
+            <button
+              (click)="switchView('modes')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#e0dcc7] hover:bg-[#1a1612] hover:text-[#c5a880] flex items-center gap-2">
+              <mat-icon class="text-[#c5a880] text-sm">auto_stories</mat-icon>
+              Histoire & Duel
+            </button>
+            <button
+              (click)="switchView('season')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#e0dcc7] hover:bg-[#1a1612] hover:text-[#c5a880] flex items-center gap-2">
+              <mat-icon class="text-[#c5a880] text-sm">workspace_premium</mat-icon>
+              Passe Saison
+            </button>
+            <button
+              (click)="switchView('social')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#e0dcc7] hover:bg-[#1a1612] hover:text-[#c5a880] flex items-center gap-2">
+              <mat-icon class="text-[#c5a880] text-sm">groups</mat-icon>
+              Guilde & Chat
+            </button>
+            <button
+              (click)="switchView('market')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#e0dcc7] hover:bg-[#1a1612] hover:text-[#c5a880] flex items-center gap-2">
+              <mat-icon class="text-[#c5a880] text-sm">storefront</mat-icon>
+              <span>Halle du Troc</span>
+              @if (gameState.pendingIncomingTradesCount() > 0) {
+                <span class="ml-auto px-1.5 py-0.5 rounded-full bg-[#8b2b2b] border border-[#ff6b6b]/50 text-white text-[9px] font-mono font-black tabular-nums">
+                  {{ gameState.pendingIncomingTradesCount() }}
+                </span>
+              }
+            </button>
+            <button
+              (click)="switchView('shop')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#e0dcc7] hover:bg-[#1a1612] hover:text-[#c5a880] flex items-center gap-2">
+              <mat-icon class="text-[#c5a880] text-sm">store</mat-icon>
+              Boutique
+            </button>
+            <button
+              (click)="switchView('profile')"
+              class="w-full text-left px-3 py-2 rounded-lg text-xs font-cinzel font-bold text-[#e0dcc7] hover:bg-[#1a1612] hover:text-[#c5a880] flex items-center gap-2">
+              <mat-icon class="text-[#c5a880] text-sm">person</mat-icon>
+              Profil & Stats
+            </button>
+          </div>
+        }
+      </div>
+    </nav>
+
+    <!-- Zone 3: Primary Actions & Vault (1-2 primary actions) -->
+    <div class="flex items-center gap-2.5">
+      
+      <!-- Vault Currencies Pill -->
+      <div class="hidden sm:flex items-center gap-2 bg-[#120f0c] px-2 py-1 rounded-xl border border-[#3a2f23] text-xs font-mono tabular-nums shadow-inner">
+        <div class="currency-pill-gold flex items-center gap-1.5 font-bold" title="Pièces d'Or">
+          <span class="currency-gold-coin text-xs">✦</span>
+          <span class="currency-gold-shine font-extrabold">{{ gameState.gold() }}</span>
+        </div>
+        <div class="currency-pill-gem flex items-center gap-1.5 font-bold" title="Gemmes d'Aether">
+          <span class="currency-gem-facet text-xs">⬥</span>
+          <span class="currency-gem-shine font-extrabold">{{ gameState.gems() }}</span>
+        </div>
+      </div>
+
+      <!-- Live Concurrent Players Counter & Popover -->
+      <div class="relative">
+        <button
+          type="button"
+          (click)="toggleOnlinePopover()"
+          aria-label="Voir les joueurs connectés en simultané"
+          title="Joueurs connectés en temps réel"
+          class="medieval-btn relative px-2.5 py-1.5 bg-[#131814] hover:bg-[#19231b] text-[#e0dcc7] rounded-lg border border-emerald-500/50 hover:border-emerald-400 shadow-md flex items-center gap-1.5 text-xs font-cinzel font-bold whitespace-nowrap shrink-0 cursor-pointer">
+          <span class="relative flex h-2 w-2 shrink-0">
+            @if (onlinePresence.isConnected()) {
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+            } @else {
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+            }
+          </span>
+          <mat-icon class="text-sm text-emerald-400">groups</mat-icon>
+          <span class="font-mono font-extrabold text-emerald-300 tabular-nums">{{ onlinePresence.onlineCount() }}</span>
+          <span class="hidden xl:inline text-[11px] text-[#c5a880]">en ligne</span>
+        </button>
+
+        @if (showOnlinePopover()) {
+          <div class="absolute top-full right-0 mt-2 w-80 max-w-[92vw] bg-[#14100c] border-2 border-[#8b6b43] rounded-2xl p-4 shadow-2xl z-50 space-y-3">
+            <div class="flex items-center justify-between border-b border-[#3a2f23] pb-2.5">
+              <div class="flex items-center gap-2">
+                <mat-icon class="text-base text-emerald-400">groups</mat-icon>
+                <span class="font-cinzel text-xs font-black text-[#ffd700] uppercase tracking-wider">
+                  Joueurs Connectés
+                </span>
+              </div>
+              <span
+                class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold border"
+                [class.bg-emerald-950/70]="onlinePresence.isConnected()"
+                [class.text-emerald-300]="onlinePresence.isConnected()"
+                [class.border-emerald-500/50]="onlinePresence.isConnected()"
+                [class.bg-amber-950/70]="!onlinePresence.isConnected()"
+                [class.text-amber-300]="!onlinePresence.isConnected()"
+                [class.border-amber-500/50]="!onlinePresence.isConnected()">
+                {{ onlinePresence.isConnected() ? 'En direct' : 'Synchronisation…' }}
+              </span>
+            </div>
+
+            <!-- Concurrent & Peak Counters -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="bg-[#1b150f] border border-emerald-500/40 rounded-xl p-2.5 text-center">
+                <span class="text-[9px] font-cinzel uppercase text-[#8b6b43] font-bold block">En simultané</span>
+                <span class="font-mono text-xl font-black text-emerald-400 tabular-nums">
+                  {{ onlinePresence.onlineCount() }}
+                </span>
+              </div>
+              <div class="bg-[#1b150f] border border-[#d4af37]/40 rounded-xl p-2.5 text-center">
+                <span class="text-[9px] font-cinzel uppercase text-[#8b6b43] font-bold block">Pic de session</span>
+                <span class="font-mono text-xl font-black text-[#ffd700] tabular-nums">
+                  {{ onlinePresence.peakOnlineCount() }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Active Sessions List -->
+            <div class="space-y-1.5 max-h-52 overflow-y-auto scrollbar-thin pr-1">
+              <span class="text-[10px] font-cinzel uppercase text-[#8b6b43] font-bold block">
+                Aventuriers présents dans la Citadelle
+              </span>
+
+              @for (player of onlinePresence.connectedPlayers(); track player.sessionId) {
+                <div class="flex items-center justify-between gap-2 bg-[#1a140f] border border-[#3a2f23] rounded-xl px-2.5 py-2 text-xs">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                    <div class="min-w-0">
+                      <div class="font-cinzel font-bold text-[#f0e4cb] truncate flex items-center gap-1.5">
+                        <span class="truncate">{{ player.playerName }}</span>
+                        @if (player.sessionId === onlinePresence.currentSessionId()) {
+                          <span class="px-1.5 py-0.2 rounded bg-[#d4af37]/20 border border-[#d4af37]/50 text-[#ffd700] text-[9px] font-mono shrink-0">
+                            Vous
+                          </span>
+                        }
+                      </div>
+                      <div class="text-[10px] font-serif text-[#a89070] truncate">
+                        {{ onlinePresence.getHeroClassLabel(player.heroClass) }} · {{ player.currentView }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <div class="text-center py-3 text-[11px] font-serif text-[#8b6b43] italic">
+                  Connexion au registre des joueurs…
+                </div>
+              }
+            </div>
+
+            <p class="text-[10px] font-serif text-[#8b6b43] leading-snug border-t border-[#3a2f23] pt-2">
+              Compteur serveur en temps réel : ouvrez un autre onglet ou invitez d’autres joueurs pour voir le nombre augmenter instantanément.
+            </p>
+          </div>
+        }
+      </div>
+
+      <!-- Daily Tactical Missions Action -->
+      <button
+        (click)="openDailyMissions()"
+        class="medieval-btn relative px-2.5 py-2 bg-[#1a1612] hover:bg-[#251f18] text-[#c5a880] hover:text-[#d4af37] rounded-lg border border-[#8b6b43]/60 shadow-md flex items-center gap-1.5 text-xs font-cinzel font-bold group"
+        title="Missions Tactiques Quotidiens (3 ordres procéduraux)">
+        <mat-icon class="text-lg text-[#d4af37] group-hover:scale-110 transition-transform">military_tech</mat-icon>
+        <span class="hidden md:inline">Missions</span>
+        @if (missionsService.hasClaimableRewards()) {
+          <span class="absolute -top-1 -right-1 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4af37] opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-[#d4af37] text-[8px] font-mono font-bold text-black items-center justify-center">!</span>
+          </span>
+        }
+      </button>
+
+      <!-- Epic Quests Action -->
+      <button
+        (click)="switchView('quests')"
+        class="medieval-btn relative px-2.5 py-2 rounded-lg border shadow-md flex items-center gap-1.5 text-xs font-cinzel font-bold transition-colors whitespace-nowrap shrink-0"
+        [class.bg-[#2a2117]]="currentView() === 'quests'"
+        [class.border-[#d4af37]]="currentView() === 'quests'"
+        [class.text-[#ffd700]]="currentView() === 'quests'"
+        [class.bg-[#1a1612]]="currentView() !== 'quests'"
+        [class.hover:bg-[#251f18]]="currentView() !== 'quests'"
+        [class.text-[#c5a880]]="currentView() !== 'quests'"
+        [class.hover:text-[#d4af37]]="currentView() !== 'quests'"
+        [class.border-[#8b6b43]/60]="currentView() !== 'quests'"
+        title="Quêtes Épiques &amp; Récompenses en Or">
+        <mat-icon class="text-lg text-[#d4af37]">explore</mat-icon>
+        <span class="hidden xl:inline">Quêtes</span>
+        @if (questService.claimableCount() > 0) {
+          <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-mono font-black tabular-nums">
+            {{ questService.claimableCount() }}
+          </span>
+        }
+      </button>
+
+      <!-- Interactive Tutorial / Guide Action -->
+      <button
+        (click)="openTutorial()"
+        class="medieval-btn relative px-2.5 py-2 bg-[#1a1612] hover:bg-[#251f18] text-[#c5a880] hover:text-[#d4af37] rounded-lg border border-[#8b6b43]/60 shadow-md flex items-center gap-1.5 text-xs font-cinzel font-bold group"
+        title="Tutoriel interactif & Guide du jeu">
+        <mat-icon class="text-lg text-[#d4af37] group-hover:rotate-12 transition-transform">school</mat-icon>
+        <span class="hidden md:inline">Guide</span>
+        @if (!tutorial.isCompleted()) {
+          <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4af37] opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#d4af37]"></span>
+          </span>
+        }
+      </button>
+
+      <!-- Changelog / Nouveautés Action -->
+      <button
+        (click)="switchView('changelog')"
+        class="medieval-btn relative px-2.5 py-2 rounded-lg border shadow-md flex items-center gap-1.5 text-xs font-cinzel font-bold group transition-colors whitespace-nowrap shrink-0"
+        [class.bg-[#2a2117]]="currentView() === 'changelog'"
+        [class.border-[#d4af37]]="currentView() === 'changelog'"
+        [class.text-[#ffd700]]="currentView() === 'changelog'"
+        [class.bg-[#1a1612]]="currentView() !== 'changelog'"
+        [class.hover:bg-[#251f18]]="currentView() !== 'changelog'"
+        [class.text-[#c5a880]]="currentView() !== 'changelog'"
+        [class.hover:text-[#d4af37]]="currentView() !== 'changelog'"
+        [class.border-[#8b6b43]/60]="currentView() !== 'changelog'"
+        title="Notes de Patch &amp; Correctifs">
+        <mat-icon class="text-lg text-[#d4af37]">new_releases</mat-icon>
+        <span class="hidden xl:inline">Patch Notes</span>
+        @if (patchNotes.unreadCount() > 0) {
+          <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-mono font-black tabular-nums">
+            {{ patchNotes.unreadCount() }}
+          </span>
+        }
+      </button>
+
+      <!-- Notification Center Action -->
+      <button
+        (click)="notificationService.toggleHistory()"
+        class="medieval-btn relative p-2 bg-[#1a1612] hover:bg-[#241e18] text-[#c5a880] hover:text-[#d4af37] rounded-lg border border-[#3a2f23] shadow-md transition-colors"
+        title="Messager & Notifications d'Aetheria">
+        <mat-icon class="text-lg">notifications</mat-icon>
+        @if (notificationService.unreadCount() > 0) {
+          <span class="absolute -top-1 -right-1 flex h-4 w-4">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff4d4d] opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-4 w-4 bg-[#ff4d4d] text-[9px] font-mono font-bold text-white items-center justify-center shadow">
+              {{ notificationService.unreadCount() > 9 ? '9+' : notificationService.unreadCount() }}
+            </span>
+          </span>
+        }
+      </button>
+
+      <!-- Daily Rewards Action -->
+      <button
+        (click)="openDailyRewards()"
+        class="medieval-btn relative p-2 bg-[#1a1612] hover:bg-[#241e18] text-[#c5a880] rounded-lg border border-[#3a2f23] shadow-md"
+        title="Récompenses quotidiennes">
+        <mat-icon class="text-lg">calendar_month</mat-icon>
+        @if (!gameState.hasClaimedDailyToday()) {
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#ff4d4d] rounded-full animate-ping"></span>
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#ff4d4d] rounded-full"></span>
+        }
+      </button>
+
+      <!-- Replay Citadel Entrance Action -->
+      <button
+        (click)="replayEntrance()"
+        class="medieval-btn p-2 bg-[#1a1612] hover:bg-[#251f18] text-[#8b6b43] hover:text-[#d4af37] rounded-lg border border-[#3a2f23] shadow-md"
+        title="Rejouer l'Animation d'Entrée des Portes de la Citadelle">
+        <mat-icon class="text-lg">meeting_room</mat-icon>
+      </button>
+
+      <!-- Quick Volume & Balance Popover Action -->
+      <div class="relative">
+        <button
+          (click)="toggleQuickVolume()"
+          class="medieval-btn relative px-2.5 py-2 bg-[#1a1612] hover:bg-[#251f18] text-[#c5a880] hover:text-[#d4af37] rounded-lg border border-[#8b6b43]/70 shadow-md flex items-center gap-1.5 text-xs font-cinzel font-bold group"
+          title="Contrôle Rapide du Volume & Équilibre Audio">
+          <mat-icon class="text-lg text-[#d4af37]" [class.text-[#ff4d4d]]="sound.settings().muted">
+            {{ sound.settings().muted ? 'volume_off' : sound.settings().masterVolume > 50 ? 'volume_up' : sound.settings().masterVolume > 0 ? 'volume_down' : 'volume_mute' }}
+          </mat-icon>
+          <span class="font-mono text-[10px] hidden sm:inline" [class.text-[#ff4d4d]]="sound.settings().muted">
+            {{ sound.settings().muted ? 'Muet' : sound.settings().masterVolume + '%' }}
+          </span>
+        </button>
+
+        <!-- Quick Volume Dropdown Popover -->
+        @if (showQuickVolume()) {
+          <div class="absolute top-full right-0 mt-2 w-72 bg-[#16110c] border-2 border-[#8b6b43] rounded-xl p-3.5 shadow-2xl z-50 animate-in fade-in space-y-3">
+            <div class="flex items-center justify-between border-b border-[#3a2f23] pb-2">
+              <span class="font-cinzel text-xs font-bold text-[#ffd700] flex items-center gap-1.5">
+                <mat-icon class="text-sm">graphic_eq</mat-icon>
+                Volume Féodal
+              </span>
+              <button
+                (click)="sound.toggleMute()"
+                class="px-2 py-0.5 rounded text-[10px] font-cinzel font-bold border transition-colors"
+                [class.bg-[#8b2b2b]_text-white_border-[#ff4d4d]]="sound.settings().muted"
+                [class.bg-[#120d09]_text-[#8b6b43]_border-[#3a2f23]]="!sound.settings().muted">
+                {{ sound.settings().muted ? 'Muet' : 'Actif' }}
+              </button>
+            </div>
+
+            <!-- Master Slider -->
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-cinzel mb-1">
+                <span class="text-stone-300">Volume Général</span>
+                <span class="font-mono text-[#ffd700] font-bold">{{ sound.settings().masterVolume }}%</span>
+              </div>
+              <input
+                #quickMasterRange
+                type="range"
+                min="0"
+                max="100"
+                [value]="sound.settings().masterVolume"
+                (input)="setMasterVolume(+quickMasterRange.value)"
+                class="medieval-slider" />
+            </div>
+
+            <!-- Quick Preset Chips -->
+            <div class="grid grid-cols-3 gap-1 pt-1">
+              <button
+                (click)="sound.applyBalancedPreset('balanced')"
+                class="medieval-btn py-1 text-[9px] font-cinzel font-bold text-center rounded">
+                Équilibré
+              </button>
+              <button
+                (click)="sound.applyBalancedPreset('battle')"
+                class="crimson-btn py-1 text-[9px] font-cinzel font-bold text-center rounded">
+                Guerre
+              </button>
+              <button
+                (click)="sound.applyBalancedPreset('tavern')"
+                class="medieval-btn py-1 text-[9px] font-cinzel font-bold text-center rounded text-amber-300">
+                Taverne
+              </button>
+            </div>
+
+            <!-- Full Console Button -->
+            <button
+              (click)="openSettings(); showQuickVolume.set(false)"
+              class="w-full py-1.5 bg-[#201811] hover:bg-[#2c2017] border border-[#8b6b43]/60 rounded-lg text-center text-xs font-cinzel font-bold text-[#d4af37] flex items-center justify-center gap-1 transition-colors">
+              <mat-icon class="text-xs">tune</mat-icon>
+              <span>Console Audio Complète</span>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Settings & Audio Action -->
+      <button
+        (click)="openSettings()"
+        class="medieval-btn p-2 bg-[#1a1612] hover:bg-[#241e18] text-[#8b6b43] hover:text-[#c5a880] rounded-lg border border-[#3a2f23] shadow-md"
+        title="Paramètres">
+        <mat-icon class="text-lg">tune</mat-icon>
+      </button>
+
+      <!-- Medieval UI Ambiance Switcher Action -->
+      <button
+        (click)="toggleMedievalThemeModal()"
+        class="medieval-btn relative px-2.5 py-1.5 bg-[#1a1612] hover:bg-[#251f18] text-[#c5a880] hover:text-[#d4af37] rounded-lg border border-[#8b6b43]/70 shadow-md flex items-center gap-1.5 text-xs font-cinzel font-bold group"
+        title="Ambiance & Décor Médiéval (Forteresse, Parchemin, Sanctuaire)">
+        <mat-icon class="text-base text-[#d4af37] group-hover:scale-110 transition-transform">castle</mat-icon>
+        <span class="hidden xl:inline">Mode Médiéval</span>
+        <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-[#120f0c] text-[#d4af37] border border-[#3a2f23]">
+          {{ getThemeBadge(gameState.medievalTheme()) }}
+        </span>
+      </button>
+
+      <!-- Mobile Hamburger Button -->
+      <button
+        (click)="toggleMoreMenu()"
+        class="lg:hidden p-2 bg-[#1a1612] text-[#c5a880] rounded-lg border border-[#3a2f23]">
+        <mat-icon class="text-lg">menu</mat-icon>
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- Mobile Dropdown drawer when open -->
+  @if (showMoreMenu()) {
+    <div class="lg:hidden bg-[#120f0c] border-b border-[#3a2f23] p-4 grid grid-cols-2 gap-2 text-xs font-cinzel font-bold">
+      <button (click)="openTutorial()" class="p-2.5 bg-[#251f18] border border-[#d4af37]/60 rounded-lg text-left text-[#d4af37] col-span-2 flex items-center gap-2">
+        <mat-icon class="text-sm text-[#d4af37]">school</mat-icon>
+        <span>Tutoriel &amp; Guide du Novice</span>
+      </button>
+      <button (click)="toggleMedievalThemeModal(); showMoreMenu.set(false)" class="p-2.5 bg-[#1a1612] border border-[#8b6b43] rounded-lg text-left text-[#d4af37] col-span-2 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-sm text-[#d4af37]">castle</mat-icon>
+          <span>Mode Médiéval : {{ getThemeBadge(gameState.medievalTheme()) }}</span>
+        </div>
+        <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#120f0c] text-[#c5a880] border border-[#3a2f23]">Changer</span>
+      </button>
+      <button (click)="openDailyMissions(); showMoreMenu.set(false)" class="p-2.5 bg-[#1f1911] border border-[#d4af37]/70 rounded-lg text-left text-[#d4af37] col-span-2 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-sm text-[#d4af37]">military_tech</mat-icon>
+          <span>Missions Tactiques Quotidiennes</span>
+        </div>
+        @if (missionsService.hasClaimableRewards()) {
+          <span class="px-2 py-0.5 bg-[#d4af37] text-black text-[10px] font-bold rounded-full animate-pulse">À Réclamer</span>
+        }
+      </button>
+      <button (click)="switchView('quests')" class="p-2.5 bg-[#1a1612] border border-[#d4af37]/60 rounded-lg text-left text-[#ffd700] col-span-2 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-sm text-[#d4af37]">explore</mat-icon>
+          <span>Quêtes Épiques</span>
+        </div>
+        @if (questService.claimableCount() > 0) {
+          <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-mono font-black tabular-nums">
+            {{ questService.claimableCount() }}
+          </span>
+        }
+      </button>
+      <button (click)="switchView('showcase')" class="p-2.5 bg-gradient-to-r from-[#2a1d0d] to-[#1c140a] border-2 border-[#d4af37] rounded-lg text-left text-[#ffd700] col-span-2 flex items-center justify-between shadow-lg">
+        <div class="flex items-center gap-2">
+          <img
+            src="/src/assets/images/emblem_aetheria_crest_1795189810140.jpg"
+            alt="Vitrine Officielle"
+            class="w-5 h-5 rounded object-cover border border-[#d4af37]/70 shrink-0"
+            referrerpolicy="no-referrer" />
+          <span class="font-bold">Site Public &amp; Vitrine Officielle</span>
+        </div>
+        <span class="text-[9px] font-mono font-black uppercase px-2 py-0.5 rounded bg-[#d4af37] text-black">Aperçu</span>
+      </button>
+      <button (click)="switchView('modes')" class="p-2.5 bg-[#241313] border border-[#ff4d4d]/50 rounded-lg text-left text-[#ff9999] col-span-2 flex items-center gap-2">
+        <mat-icon class="text-sm text-[#d4af37]">sports_esports</mat-icon>
+        <span>Modes : Histoire &amp; Duel</span>
+      </button>
+      <button (click)="switchView('arena')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#c5a880] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#ff6b6b]">swords</mat-icon>
+        <span>Arène</span>
+      </button>
+      <button (click)="switchView('deckbuilder')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#d4af37]">auto_stories</mat-icon>
+        <span>Grimoire</span>
+      </button>
+      <button (click)="switchView('heroes')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#38bdf8]">shield</mat-icon>
+        <span>Héros</span>
+      </button>
+      <button (click)="switchView('skilltree')" class="p-2.5 bg-[#1a1612] border border-emerald-500/50 rounded-lg text-left text-emerald-300 flex items-center gap-1.5">
+        <mat-icon class="text-xs text-emerald-400">park</mat-icon>
+        <span>Arbre Talents</span>
+      </button>
+      <button (click)="switchView('pets')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center justify-between">
+        <span class="flex items-center gap-1.5">
+          @if (gameState.equippedPet(); as activePet) {
+            @if (activePet.imageUrl) {
+              <img
+                [src]="activePet.imageUrl"
+                [alt]="activePet.name"
+                class="w-4 h-4 rounded-full object-cover border border-[#4dff88]/70 shrink-0"
+                referrerpolicy="no-referrer" />
+            } @else {
+              <mat-icon class="text-xs text-[#4dff88]">pets</mat-icon>
+            }
+          } @else {
+            <mat-icon class="text-xs text-[#4dff88]">pets</mat-icon>
+          }
+          <span>Familiers</span>
+        </span>
+        @if (gameState.equippedPet(); as activePet) {
+          <span class="text-[10px] text-[#4dff88] font-mono font-bold">x{{ activePet.totalMultiplier.toFixed(2) }}</span>
+        }
+      </button>
+      <button (click)="switchView('relics')" class="p-2.5 bg-[#1a1612] border border-[#d4af37]/60 rounded-lg text-left text-[#d4af37] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#d4af37]">auto_awesome</mat-icon>
+        <span>Reliques</span>
+      </button>
+      <button (click)="switchView('inventory')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#a855f7]">science</mat-icon>
+        <span>Élixirs</span>
+      </button>
+      <button (click)="switchView('bestiary')" class="p-2.5 bg-[#1a1612] border border-[#d4af37]/50 rounded-lg text-left text-[#ffd700] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#ffd700]">menu_book</mat-icon>
+        <span>Bestiaire</span>
+      </button>
+      <button (click)="switchView('achievements')" class="p-2.5 bg-[#1a1612] border border-[#d4af37]/50 rounded-lg text-left text-[#ffd700] flex items-center justify-between gap-1.5">
+        <span class="flex items-center gap-1.5">
+          <mat-icon class="text-xs text-[#ffd700]">emoji_events</mat-icon>
+          <span>Succès</span>
+        </span>
+        @if (gameState.achievementsClaimableCount() > 0) {
+          <span class="px-1.5 py-0.5 rounded-full bg-[#d4af37] text-[#120f0c] text-[9px] font-mono font-black tabular-nums">
+            {{ gameState.achievementsClaimableCount() }}
+          </span>
+        }
+      </button>
+      <button (click)="switchView('ranked')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#d4af37]">leaderboard</mat-icon>
+        <span>Classement</span>
+      </button>
+      <button (click)="switchView('season')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#fbbf24]">workspace_premium</mat-icon>
+        <span>Saison</span>
+      </button>
+      <button (click)="switchView('social')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#c5a880]">groups</mat-icon>
+        <span>Guilde</span>
+      </button>
+      <button (click)="switchView('market')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center justify-between gap-1.5">
+        <span class="flex items-center gap-1.5">
+          <mat-icon class="text-xs text-[#c5a880]">storefront</mat-icon>
+          <span>Troc</span>
+        </span>
+        @if (gameState.pendingIncomingTradesCount() > 0) {
+          <span class="px-1.5 py-0.5 rounded-full bg-[#8b2b2b] text-white text-[9px] font-mono font-black tabular-nums">
+            {{ gameState.pendingIncomingTradesCount() }}
+          </span>
+        }
+      </button>
+      <button (click)="switchView('shop')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#c5a880]">store</mat-icon>
+        <span>Boutique</span>
+      </button>
+      <button (click)="switchView('profile')" class="p-2.5 bg-[#1a1612] border border-[#3a2f23] rounded-lg text-left text-[#e0dcc7] flex items-center gap-1.5">
+        <mat-icon class="text-xs text-[#c5a880]">person</mat-icon>
+        <span>Profil</span>
+      </button>
+      <button (click)="switchView('changelog')" class="p-2.5 bg-[#1a1612] border border-[#d4af37]/50 rounded-lg text-left text-[#ffd700] flex items-center justify-between gap-1.5 col-span-2">
+        <span class="flex items-center gap-1.5">
+          <mat-icon class="text-xs text-[#d4af37]">new_releases</mat-icon>
+          <span>Notes de Patch &amp; Correctifs</span>
+        </span>
+        @if (patchNotes.unreadCount() > 0) {
+          <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-mono font-black tabular-nums">
+            {{ patchNotes.unreadCount() }}
+          </span>
+        }
+      </button>
+    </div>
+  }
+
+  <!-- MAIN VIEW CONTAINER -->
+  <main class="flex-1 pb-12">
+    @switch (currentView()) {
+      @case ('showcase') {
+        <div class="animate-view-fade">
+          <app-public-showcase (launchGame)="switchView('arena')" (openModes)="switchView('modes')" />
+        </div>
+      }
+      @case ('modes') {
+        <div class="animate-view-fade">
+          <app-game-modes-view (startBattle)="switchView('arena')" (navigateToDeck)="switchView('deckbuilder')" />
+        </div>
+      }
+      @case ('story') {
+        <div class="animate-view-fade">
+          <app-game-modes-view (startBattle)="switchView('arena')" (navigateToDeck)="switchView('deckbuilder')" />
+        </div>
+      }
+      @case ('duel') {
+        <div class="animate-view-fade">
+          <app-game-modes-view (startBattle)="switchView('arena')" (navigateToDeck)="switchView('deckbuilder')" />
+        </div>
+      }
+      @case ('arena') {
+        <div class="animate-view-fade">
+          <app-arena-view
+            (navigateToModes)="switchView('modes')"
+            (openDailyMissions)="openDailyMissions()"
+            (openEpicQuests)="switchView('quests')"
+            (openAlchemy)="switchView('inventory')" />
+        </div>
+      }
+      @case ('deckbuilder') {
+        <div class="animate-view-fade">
+          <app-deckbuilder-view />
+        </div>
+      }
+      @case ('heroes') {
+        <div class="animate-view-fade">
+          <app-heroes-view />
+        </div>
+      }
+      @case ('skilltree') {
+        <div class="animate-view-fade">
+          <app-skill-tree-view />
+        </div>
+      }
+      @case ('pets') {
+        <div class="animate-view-fade">
+          <app-pets-view />
+        </div>
+      }
+      @case ('relics') {
+        <div class="animate-view-fade">
+          <app-relics-view />
+        </div>
+      }
+      @case ('inventory') {
+        <div class="animate-view-fade">
+          <app-inventory-view />
+        </div>
+      }
+      @case ('bestiary') {
+        <div class="animate-view-fade">
+          <app-bestiary-view />
+        </div>
+      }
+      @case ('season') {
+        <div class="animate-view-fade">
+          <app-season-pass-view />
+        </div>
+      }
+      @case ('ranked') {
+        <div class="animate-view-fade">
+          <app-ranked-arena-view (duelStarted)="switchView('arena')" />
+        </div>
+      }
+      @case ('social') {
+        <div class="animate-view-fade">
+          <app-social-guild-view />
+        </div>
+      }
+      @case ('market') {
+        <div class="animate-view-fade">
+          <app-marketplace-view />
+        </div>
+      }
+      @case ('shop') {
+        <div class="animate-view-fade">
+          <app-shop-view />
+        </div>
+      }
+      @case ('profile') {
+        <div class="animate-view-fade">
+          <app-profile-stats-view (navigateToAchievements)="switchView('achievements')" />
+        </div>
+      }
+      @case ('achievements') {
+        <div class="animate-view-fade">
+          <app-achievements-view (navigateTo)="switchView($event)" />
+        </div>
+      }
+      @case ('missions') {
+        <div class="animate-view-fade p-4 md:p-6">
+          <app-daily-missions (navigateToArena)="switchView('arena')" />
+        </div>
+      }
+      @case ('quests') {
+        <div class="animate-view-fade">
+          <app-epic-quests (navigateToArena)="switchView('arena')" />
+        </div>
+      }
+      @case ('changelog') {
+        <div class="animate-view-fade">
+          <app-patch-notes (navigateTo)="switchView($event)" />
+        </div>
+      }
+    }
+  </main>
+
+  <!-- MODALS -->
+  @if (showSettings()) {
+    <app-settings-modal (modalClose)="showSettings.set(false)" />
+  }
+
+  @if (showDailyModal()) {
+    <app-daily-rewards-modal (modalClose)="showDailyModal.set(false)" />
+  }
+
+  @if (showDailyMissionsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 md:p-6 overflow-y-auto">
+      <div class="relative w-full max-w-5xl my-auto">
+        <app-daily-missions
+          (modalClose)="showDailyMissionsModal.set(false)"
+          (navigateToArena)="switchView('arena'); showDailyMissionsModal.set(false)" />
+      </div>
+    </div>
+  }
+
+  @if (tutorial.isOverlayOpen()) {
+    <app-tutorial-overlay (navigateView)="switchView($event)" />
+  }
+
+  <!-- REAL-TIME TOAST NOTIFICATIONS & MESSENGER DRAWER -->
+  <app-toast-container (navigate)="switchView($event)" />
+
+  <!-- HEAVY METAL MUSIC PLAYER & LYRIA JUKEBOX -->
+  <app-heavy-metal-player />
+
+  <!-- MEDIEVAL UI AMBIANCE MODAL -->
+  @if (showMedievalThemeModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in">
+      <div class="bg-[#120f0c] border-2 border-[#8b6b43] rounded-2xl max-w-xl w-full p-6 shadow-2xl text-[#e0dcc7] space-y-5 medieval-corner-rivets">
+        
+        <!-- Header -->
+        <div class="flex items-start justify-between border-b border-[#3a2f23] pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <img
+                src="/src/assets/images/emblem_aetheria_crest_1795189810140.jpg"
+                alt="Sceau Royal"
+                class="w-6 h-6 rounded-full object-cover border border-[#d4af37]"
+                referrerpolicy="no-referrer" />
+              <span class="text-[10px] font-cinzel text-[#8b6b43] font-bold uppercase tracking-widest">
+                Décor & Ambiance Féodale d'Aetheria
+              </span>
+            </div>
+            <h3 class="font-cinzel text-2xl font-black text-[#c5a880] mt-1 flex items-center gap-2">
+              <mat-icon class="text-[#d4af37]">castle</mat-icon>
+              Interface en Mode Médiéval
+            </h3>
+          </div>
+          <button (click)="showMedievalThemeModal.set(false)" class="text-[#6b5a45] hover:text-[#e0dcc7] p-1">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <p class="text-xs text-[#c5a880] leading-relaxed">
+          Personnalisez l'atmosphère visuelle du royaume d'Aetheria. Choisissez entre les pierres ancestrales de la forteresse, la poésie d'un grimoire enluminé sur parchemin, ou la majesté de la cour royale.
+        </p>
+
+        <!-- Theme Cards Selection -->
+        <div class="space-y-3">
+          @for (opt of gameState.medievalThemeOptions; track opt.id) {
+            @let isSelected = gameState.medievalTheme() === opt.id;
+            <div
+              tabindex="0"
+              role="button"
+              (click)="selectMedievalTheme(opt.id)"
+              (keydown.enter)="selectMedievalTheme(opt.id)"
+              class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer group shadow-lg"
+              [class.border-[#d4af37]]="isSelected"
+              [class.bg-[#1a1612]]="isSelected"
+              [class.shadow-[0_0_20px_rgba(212,175,55,0.25)]]="isSelected"
+              [class.border-[#3a2f23]]="!isSelected"
+              [class.bg-[#120f0c]]="!isSelected"
+              [class.hover:border-[#8b6b43]]="!isSelected">
+              
+              <div class="flex items-center gap-3.5">
+                <div
+                  class="w-12 h-12 rounded-xl border flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform"
+                  [class]="opt.previewBorder + ' ' + opt.previewBg">
+                  <mat-icon class="text-2xl" [class]="opt.previewText">{{ opt.icon }}</mat-icon>
+                </div>
+
+                <div class="space-y-0.5">
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-cinzel font-bold text-sm text-[#e0dcc7] group-hover:text-[#d4af37] transition-colors">
+                      {{ opt.name }}
+                    </h4>
+                    <span
+                      class="px-2 py-0.5 rounded text-[9px] font-cinzel font-bold uppercase tracking-wider border"
+                      [class]="opt.previewBorder + ' ' + opt.previewText + ' bg-[#120f0c]'">
+                      {{ opt.badge }}
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-[#8b6b43] font-serif leading-snug">
+                    {{ opt.description }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="self-end sm:self-center shrink-0">
+                @if (isSelected) {
+                  <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#122812] border border-[#225c22] text-[#4dff88] text-xs font-cinzel font-bold">
+                    <mat-icon class="text-xs">check</mat-icon>
+                    <span>Actif</span>
+                  </span>
+                } @else {
+                  <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#1a1612] border border-[#3a2f23] text-[#8b6b43] text-xs font-cinzel font-semibold group-hover:text-[#c5a880] group-hover:border-[#8b6b43]">
+                    <span>Choisir</span>
+                  </span>
+                }
+              </div>
+
+            </div>
+          }
+        </div>
+
+        <!-- Atmospheric Effects Summary -->
+        <div class="bg-[#1a1612] p-3 rounded-xl border border-[#3a2f23] flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-[#c5a880]">
+            <mat-icon class="text-base text-[#d4af37]">local_fire_department</mat-icon>
+            <span class="font-serif">Effets de torches ardentes, rivets de fer et bannières héraldiques activés.</span>
+          </div>
+          <span class="text-[10px] font-mono text-[#8b6b43] uppercase font-bold">Mode Médiéval HD</span>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-between pt-2 border-t border-[#3a2f23]">
+          <button
+            (click)="replayEntrance(); showMedievalThemeModal.set(false)"
+            class="medieval-btn px-4 py-2 rounded-xl border border-[#8b6b43] bg-[#1a1612] text-[#d4af37] font-cinzel font-bold text-xs flex items-center gap-1.5 shadow">
+            <mat-icon class="text-sm">meeting_room</mat-icon>
+            <span>Rejouer l'Entrée</span>
+          </button>
+
+          <button
+            (click)="showMedievalThemeModal.set(false)"
+            class="crimson-btn px-6 py-2 rounded-xl font-cinzel font-bold text-xs uppercase tracking-wider shadow">
+            Fermer le Décor
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- GRAND MEDIEVAL CITADEL ENTRANCE ANIMATION (Les Portes d'Aetheria) -->
+  @if (isEntrancePlaying()) {
+    <div class="fixed inset-0 z-50 overflow-hidden flex items-center justify-center bg-black select-none">
+      
+      <!-- Ambient Torch & Fog in Entrance Hall -->
+      <div class="absolute inset-0 bg-gradient-to-b from-amber-950/20 via-black to-black pointer-events-none z-10"></div>
+      
+      <!-- Skip Action Top-Right -->
+      <button
+        (click)="skipEntrance()"
+        class="absolute top-4 right-4 z-40 px-3 py-1.5 bg-[#1a1612]/85 hover:bg-[#251f18] text-[#c5a880] hover:text-[#d4af37] border border-[#8b6b43]/70 rounded-lg text-xs font-cinzel font-bold shadow-2xl flex items-center gap-1.5 backdrop-blur transition-all">
+        <span>Passer l'Entrée</span>
+        <mat-icon class="text-sm">fast_forward</mat-icon>
+      </button>
+
+      <!-- Giant Light Burst when opening -->
+      @if (isGatesOpening()) {
+        <div class="absolute inset-0 z-25 pointer-events-none flex items-center justify-center">
+          <div class="w-[500px] h-[500px] rounded-full bg-radial from-amber-200/90 via-amber-500/40 to-transparent animate-light-burst"></div>
+        </div>
+      }
+
+      <!-- Left Fortress Gate (Oak & Iron) -->
+      <div
+        class="absolute top-0 bottom-0 left-0 w-1/2 z-20 flex flex-col justify-between border-r-4 border-[#120f0c] shadow-2xl transition-transform"
+        [class.animate-gate-open-left]="isGatesOpening()"
+        style="background: linear-gradient(90deg, #140f0b 0%, #221811 50%, #1a120c 100%); box-shadow: inset -15px 0 35px rgba(0,0,0,0.85), 15px 0 30px rgba(0,0,0,0.95);">
+        
+        <!-- Wood Plank Lines & Iron Straps -->
+        <div class="w-full h-full relative p-4 md:p-8 flex flex-col justify-around">
+          <!-- Horizontal Iron Strap 1 -->
+          <div class="w-full h-10 md:h-14 bg-gradient-to-r from-[#17130f] via-[#2d251f] to-[#17130f] border-y-2 border-[#8b6b43]/50 flex items-center justify-around shadow-inner">
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+          </div>
+
+          <!-- Central Left Ring / Knocker -->
+          <div class="self-end mr-3 md:mr-6 w-14 h-14 md:w-20 md:h-20 rounded-full border-4 border-[#8b6b43] bg-[#120f0c] flex items-center justify-center shadow-2xl">
+            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-dashed border-[#d4af37]/60 flex items-center justify-center text-[#d4af37]">
+              <mat-icon class="text-sm md:text-base">lock</mat-icon>
+            </div>
+          </div>
+
+          <!-- Horizontal Iron Strap 2 -->
+          <div class="w-full h-10 md:h-14 bg-gradient-to-r from-[#17130f] via-[#2d251f] to-[#17130f] border-y-2 border-[#8b6b43]/50 flex items-center justify-around shadow-inner">
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Fortress Gate (Oak & Iron) -->
+      <div
+        class="absolute top-0 bottom-0 right-0 w-1/2 z-20 flex flex-col justify-between border-l-4 border-[#120f0c] shadow-2xl transition-transform"
+        [class.animate-gate-open-right]="isGatesOpening()"
+        style="background: linear-gradient(270deg, #140f0b 0%, #221811 50%, #1a120c 100%); box-shadow: inset 15px 0 35px rgba(0,0,0,0.85), -15px 0 30px rgba(0,0,0,0.95);">
+        
+        <!-- Wood Plank Lines & Iron Straps -->
+        <div class="w-full h-full relative p-4 md:p-8 flex flex-col justify-around">
+          <!-- Horizontal Iron Strap 1 -->
+          <div class="w-full h-10 md:h-14 bg-gradient-to-r from-[#17130f] via-[#2d251f] to-[#17130f] border-y-2 border-[#8b6b43]/50 flex items-center justify-around shadow-inner">
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+          </div>
+
+          <!-- Central Right Ring / Knocker -->
+          <div class="self-start ml-3 md:ml-6 w-14 h-14 md:w-20 md:h-20 rounded-full border-4 border-[#8b6b43] bg-[#120f0c] flex items-center justify-center shadow-2xl">
+            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-dashed border-[#d4af37]/60 flex items-center justify-center text-[#d4af37]">
+              <mat-icon class="text-sm md:text-base">lock</mat-icon>
+            </div>
+          </div>
+
+          <!-- Horizontal Iron Strap 2 -->
+          <div class="w-full h-10 md:h-14 bg-gradient-to-r from-[#17130f] via-[#2d251f] to-[#17130f] border-y-2 border-[#8b6b43]/50 flex items-center justify-around shadow-inner">
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+            <span class="w-3 md:w-4 h-3 md:h-4 rounded-full bg-black border border-[#8b6b43] shadow"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Central Heraldic Seal & Entrance Title -->
+      <div
+        class="relative z-30 flex flex-col items-center justify-center p-6 text-center max-w-xl transition-all duration-300"
+        [class.opacity-0]="isGatesOpening()"
+        [class.scale-95]="isGatesOpening()">
+        
+        <!-- Ornate Heraldic Seal -->
+        <div class="w-24 h-24 md:w-32 md:h-32 mb-4 rounded-full bg-gradient-to-br from-[#2a1d13] via-[#1a120c] to-[#0d0906] border-4 border-[#d4af37] shadow-[0_0_40px_rgba(212,175,55,0.7)] flex items-center justify-center animate-crest-glow overflow-hidden p-1">
+          <img
+            src="/src/assets/images/emblem_aetheria_crest_1795189810140.jpg"
+            alt="Blason Royal d'Aetheria"
+            class="w-full h-full rounded-full object-cover border border-[#d4af37]/60"
+            referrerpolicy="no-referrer" />
+        </div>
+
+        <div class="inline-flex items-center gap-2 mb-2">
+          <mat-icon class="text-base text-[#d4af37]">shield</mat-icon>
+          <span class="font-cinzel text-xs md:text-sm font-bold uppercase tracking-widest text-[#d4af37]">
+            Royaume Féodal d'Aetheria
+          </span>
+          <mat-icon class="text-base text-[#d4af37]">shield</mat-icon>
+        </div>
+
+        <h1 class="font-cinzel-dec text-3xl md:text-5xl font-black text-white tracking-wider mb-2 drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+          AETHERIA
+        </h1>
+
+        <p class="font-cinzel text-xs md:text-sm text-[#c5a880] tracking-widest uppercase mb-6">
+          Chroniques des Cartes & Arène Féodale
+        </p>
+
+        <!-- Call to Action: Open Gates Button -->
+        <button
+          (click)="openGates()"
+          class="crimson-btn px-8 py-3.5 rounded-xl font-cinzel font-black text-xs md:text-sm tracking-wider uppercase flex items-center gap-2.5 shadow-[0_0_30px_rgba(139,43,43,0.75)] group hover:scale-105 transition-all">
+          <mat-icon class="text-lg group-hover:rotate-12 transition-transform">swords</mat-icon>
+          <span>Franchir les Portes</span>
+          <mat-icon class="text-lg group-hover:-rotate-12 transition-transform">meeting_room</mat-icon>
+        </button>
+
+        <span class="text-[10px] font-mono text-[#8b6b43] mt-3">
+          Ouverture automatique dans un instant...
+        </span>
+
+      </div>
+
+    </div>
+  }
+
+  <!-- FULLSCREEN EPIC SKIN UNLOCK REVEAL OVERLAY -->
+  <app-skin-reveal-overlay (inspectHero)="onInspectRevealedHero($event)" />
+
+</div>
